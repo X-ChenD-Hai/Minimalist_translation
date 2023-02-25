@@ -1,5 +1,5 @@
 # 极简翻译
-### 更新至[v1.0.1](https://github.com/X-CenD-Hai/-/tree/master/build%5C%E6%9E%81%E7%AE%80%E7%BF%BB%E8%AF%91v1.0.1%08)
+### 更新至[v1.0.1](https://github.com/X-CenD-Hai/-/tree/master/build/%E6%9E%81%E7%AE%80%E7%BF%BB%E8%AF%91v1.0.1)
 <img src="build\Icon\极简翻译v1.0.1.png" width="60%">
 
 ## 开发环境
@@ -9,6 +9,6 @@
 ### 编辑器vscode
 
 # 版本 
-- [极简翻译v1.0.1](https://github.com/X-CenD-Hai/-/tree/master/build)
+- [极简翻译v1.0.1](https://github.com/X-CenD-Hai/-/tree/master/build/%E6%9E%81%E7%AE%80%E7%BF%BB%E8%AF%91v1.0.1)
     - 版本日志
     完成基本翻译功能
