@@ -24,6 +24,7 @@ class Ui_titleBar
 public:
     QHBoxLayout *horizontalLayout;
     QLabel *label;
+    QToolButton *toolButton_4;
     QSpacerItem *horizontalSpacer_2;
     QLabel *label_2;
     QSpacerItem *horizontalSpacer;
@@ -46,6 +47,11 @@ public:
         label->setFrameShadow(QFrame::Plain);
 
         horizontalLayout->addWidget(label);
+
+        toolButton_4 = new QToolButton(titleBar);
+        toolButton_4->setObjectName(QString::fromUtf8("toolButton_4"));
+
+        horizontalLayout->addWidget(toolButton_4);
 
         horizontalSpacer_2 = new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum);
 
@@ -90,6 +96,7 @@ public:
     {
         titleBar->setWindowTitle(QCoreApplication::translate("titleBar", "Form", nullptr));
         label->setText(QString());
+        toolButton_4->setText(QString());
         label_2->setText(QCoreApplication::translate("titleBar", "TextLabel", nullptr));
         toolButton->setText(QCoreApplication::translate("titleBar", "-", nullptr));
         toolButton_2->setText(QCoreApplication::translate("titleBar", "\342\226\242", nullptr));

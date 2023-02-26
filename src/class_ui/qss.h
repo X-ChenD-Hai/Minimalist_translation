@@ -13,4 +13,7 @@ QDockWidget {\
     background-color: rgb(74, 74, 74);\
     color: white;\
 }\
+QToolButton::menu-indicator {\
+    image: none;\
+}\
 "

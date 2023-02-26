@@ -14,21 +14,21 @@ class titleBar : public QWidget
     Q_OBJECT
 
 public:
+    QMenu *m_menu;
     explicit titleBar(QWidget *parent = nullptr);
     ~titleBar();
 public slots:
     void on_toolButton_2_clicked();
-
 private:
     Ui::titleBar *ui;
     QPoint mPos;
     QWidget *pWidget = this->parentWidget();
+    void initMenu();
     void initTitleBar();
     void mouseDoubleClickEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
-    bool toNativeEvent(const QByteArray&, void *message, long *result);
+    bool toNativeEvent(const QByteArray &, void *message, long *result);
     void setTitle(char *title);
     void setIcon(char *iconPath);
 };
-

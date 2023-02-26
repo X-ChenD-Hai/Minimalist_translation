@@ -13,7 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
-#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QSplitter>
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
@@ -27,10 +27,10 @@ public:
     QAction *act_add;
     QAction *act_minus;
     QWidget *centralwidget;
-    QVBoxLayout *verticalLayout_2;
+    QVBoxLayout *verticalLayout;
+    QSplitter *splitter;
     QTextEdit *toEdit;
     QTextEdit *fromEdit;
-    QStatusBar *statusbar;
 
     void setupUi(QMainWindow *mTrs)
     {
@@ -45,22 +45,26 @@ public:
         act_minus->setObjectName(QString::fromUtf8("act_minus"));
         centralwidget = new QWidget(mTrs);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
-        verticalLayout_2 = new QVBoxLayout(centralwidget);
-        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
-        toEdit = new QTextEdit(centralwidget);
+        verticalLayout = new QVBoxLayout(centralwidget);
+        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        verticalLayout->setContentsMargins(1, 1, 1, 1);
+        splitter = new QSplitter(centralwidget);
+        splitter->setObjectName(QString::fromUtf8("splitter"));
+        splitter->setLineWidth(0);
+        splitter->setOrientation(Qt::Vertical);
+        splitter->setHandleWidth(0);
+        toEdit = new QTextEdit(splitter);
         toEdit->setObjectName(QString::fromUtf8("toEdit"));
-
-        verticalLayout_2->addWidget(toEdit);
-
-        fromEdit = new QTextEdit(centralwidget);
+        toEdit->setMinimumSize(QSize(100, 100));
+        splitter->addWidget(toEdit);
+        fromEdit = new QTextEdit(splitter);
         fromEdit->setObjectName(QString::fromUtf8("fromEdit"));
+        fromEdit->setMinimumSize(QSize(100, 100));
+        splitter->addWidget(fromEdit);
 
-        verticalLayout_2->addWidget(fromEdit);
+        verticalLayout->addWidget(splitter);
 
         mTrs->setCentralWidget(centralwidget);
-        statusbar = new QStatusBar(mTrs);
-        statusbar->setObjectName(QString::fromUtf8("statusbar"));
-        mTrs->setStatusBar(statusbar);
 
         retranslateUi(mTrs);
         QObject::connect(action123, SIGNAL(triggered()), mTrs, SLOT(close()));

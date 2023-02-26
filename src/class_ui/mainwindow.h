@@ -1,5 +1,5 @@
 #pragma once
-#include"mTrs.h"                
+#include "mTrs.h"
 #include <QWidget>
 class titleBar;
 class mTrs;
@@ -18,8 +18,8 @@ class MainWindow : public QWidget
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void setWindowTitle(char*title);
-    void setWindowIcon(char*iconPath);
+    void setWindowTitle(char *title);
+    void setWindowIcon(char *iconPath);
 
 private:
     Ui::MainWindow *ui;
@@ -27,7 +27,8 @@ private:
     QFont font;
     void initUI();
     bool nativeEvent(const QByteArray &eventType, void *message, long *result);
+    void initAction();
+    
 private slots:
-    void setfont();
+    void act_slot(bool chicked);
 };
-

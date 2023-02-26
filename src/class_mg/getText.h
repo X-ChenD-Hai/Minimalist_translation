@@ -17,7 +17,7 @@ class getText : public QObject
 {
     Q_OBJECT
 public:
-    QString &getTranslateText() const;
+    QString * getTranslateText() const;
     void setPattem();
     void startTranslate(const QString &text);
 
@@ -26,7 +26,7 @@ private:
     QNetworkReply *rep;
     QNetworkRequest req;
     QJsonDocument *jsonData;
-    QString *result = new QString("");
+    QString *result=NULL;
     void replyFinshed();
 
 private:

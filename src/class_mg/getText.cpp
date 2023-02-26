@@ -14,9 +14,11 @@
 
 void getText::startTranslate(const QString &text)
 {
+
     this->req.setUrl(this->createUrl(text));
     req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     this->manger = new QNetworkAccessManager(this);
+    this->result = NULL;
     this->rep = manger->get(req);
     connect(this->rep, &QNetworkReply::finished, this, &getText::replyFinshed);
 }
@@ -43,15 +45,18 @@ void getText::replyFinshed()
         foreach (QJsonValue a, arry)
             s_result += a.toObject().value("dst").toString() + "\n";
         if (this->result)
+        {
             delete this->result;
+            this->result = NULL;
+        }
         this->result = new QString(s_result);
+        // D << s_result;
     }
 }
 
-QString &getText::getTranslateText() const
+QString *getText::getTranslateText() const
 {
-    if (this->result)
-        return *this->result;
+    return this->result;
 }
 
 QUrl getText::createUrl(const QString &text)
@@ -62,11 +67,11 @@ QUrl getText::createUrl(const QString &text)
     m_u = M_URL;
 
     qsrand(QTime(0, 0, 0).secsTo(QTime::currentTime()));
-    qint16 randint_ = qrand();
+    QString salt = QString("jnbdguvjernbfg") + QString(qrand()) + QString("jnbfugjnbrtgb");
     m_p["q"] = text;
     m_p["from"] = this->from;
     m_p["to"] = this->to;
-    m_p["salt"] = QString().sprintf("jaqigojrfegh%dsdfdsafgas", qrand());
+    m_p["salt"] = salt;
     m_p["appid"] = M_APP_ID;
 
     QString osign = (m_p["appid"] + m_p["q"] + m_p["salt"] + M_KEY);
@@ -77,6 +82,6 @@ QUrl getText::createUrl(const QString &text)
 
     foreach (const QString a, m_p.keys())
         url += (a + "=" + m_p[a] + "&");
-    D << url;
+    // D << url;
     return QUrl(url);
 }

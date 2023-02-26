@@ -3,9 +3,13 @@
 #include <QDebug>
 #include <QEvent>
 #include <QMouseEvent>
+#include <QMenu>
+#include <QAction>
+#include <QToolButton>
 #include <windows.h>
 #include <windowsx.h>
 #define D qDebug()
+
 
 titleBar::titleBar(QWidget *parent) : QWidget(parent),
                                       ui(new Ui::titleBar)
@@ -27,6 +31,7 @@ void titleBar::initTitleBar()
     this->ui->label_2->setFont(font);
     connect(this->ui->toolButton_3, QToolButton::clicked, qApp, QApplication::quit);
     connect(this->ui->toolButton, QToolButton::clicked, this->pWidget, QWidget::showMinimized);
+    this->initMenu();
 }
 
 void titleBar::on_toolButton_2_clicked()
@@ -98,9 +103,25 @@ bool titleBar::toNativeEvent(const QByteArray &, void *message, long *result)
 void titleBar::setTitle(char *title)
 {
     this->ui->label_2->setText(title);
+    this->pWidget->setWindowTitle(title);
 }
 
 void titleBar::setIcon(char *iconPath)
 {
     this->ui->label->setPixmap(QPixmap(iconPath));
+    this->pWidget->setWindowIcon(QIcon(iconPath));
 }
+
+void titleBar::initMenu()
+{
+    QToolButton *&btMenu = this->ui->toolButton_4;
+    btMenu->setIcon(QIcon("resource\\icon\\符号-菜单.png"));
+    btMenu->setIconSize(QSize(40, 40));
+    btMenu->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    btMenu->setPopupMode(QToolButton::InstantPopup);
+    btMenu->setArrowType(Qt::ArrowType::NoArrow);
+
+    this->m_menu = new QMenu(btMenu);
+    btMenu->setMenu(this->m_menu);
+}
+
