@@ -10,6 +10,7 @@
 #define UI_TITLEBAR_H
 
 #include <QtCore/QVariant>
+#include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
@@ -22,6 +23,7 @@ QT_BEGIN_NAMESPACE
 class Ui_titleBar
 {
 public:
+    QAction *act_menu;
     QHBoxLayout *horizontalLayout;
     QLabel *label;
     QToolButton *toolButton_4;
@@ -38,6 +40,8 @@ public:
             titleBar->setObjectName(QString::fromUtf8("titleBar"));
         titleBar->resize(400, 40);
         titleBar->setMaximumSize(QSize(16777215, 40));
+        act_menu = new QAction(titleBar);
+        act_menu->setObjectName(QString::fromUtf8("act_menu"));
         horizontalLayout = new QHBoxLayout(titleBar);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
@@ -95,6 +99,7 @@ public:
     void retranslateUi(QWidget *titleBar)
     {
         titleBar->setWindowTitle(QCoreApplication::translate("titleBar", "Form", nullptr));
+        act_menu->setText(QCoreApplication::translate("titleBar", "1", nullptr));
         label->setText(QString());
         toolButton_4->setText(QString());
         label_2->setText(QCoreApplication::translate("titleBar", "TextLabel", nullptr));

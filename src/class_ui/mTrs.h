@@ -18,11 +18,12 @@ public slots:
     void updateToText();
     void setfont(QFont &font);
     void init_mTrs();
+    void setEngine(bool);
 
 private:
-    Ui_mTrs *ui;
-    getText *translater;
-    QTimer *timer1;
-    QTimer *timer2;
-    QString *previousStr = new QString("");
+    Ui_mTrs *ui=NULL;
+    getText *translater=NULL;
+    QTimer *timer1=NULL;
+    QTimer *timer2=NULL;
+    QString *previousStr=NULL;
 };

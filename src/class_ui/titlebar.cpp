@@ -10,7 +10,6 @@
 #include <windowsx.h>
 #define D qDebug()
 
-
 titleBar::titleBar(QWidget *parent) : QWidget(parent),
                                       ui(new Ui::titleBar)
 {
@@ -25,6 +24,7 @@ titleBar::~titleBar()
 
 void titleBar::initTitleBar()
 {
+    this->pWidget = this->parentWidget();
     QFont font;
     font.setPixelSize(25);
     font.setBold(true);
@@ -124,4 +124,3 @@ void titleBar::initMenu()
     this->m_menu = new QMenu(btMenu);
     btMenu->setMenu(this->m_menu);
 }
-

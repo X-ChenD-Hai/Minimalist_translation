@@ -22,13 +22,13 @@ public:
     void setWindowIcon(char *iconPath);
 
 private:
-    Ui::MainWindow *ui;
-    mTrs *mtrs;
+    Ui::MainWindow *ui=NULL;
+    mTrs *mtrs=NULL;
     QFont font;
     void initUI();
     bool nativeEvent(const QByteArray &eventType, void *message, long *result);
     void initAction();
-    
+
 private slots:
     void act_slot(bool chicked);
 };

@@ -26,6 +26,7 @@ mTrs::mTrs(QWidget *parent)
 void mTrs::init_mTrs()
 {
     ui->setupUi(this);
+    this->previousStr = new QString("");
     this->timer1 = new QTimer(this);
     this->timer2 = new QTimer(this);
     this->timer2->setObjectName("timer2");
@@ -63,7 +64,7 @@ void mTrs::updateToText()
 {
     QString *res = this->translater->getTranslateText();
     // D << "test";
-    if (res != NULL)
+    if (res)
     {
         this->ui->toEdit->setText(*res);
         this->timer1->stop();
@@ -75,6 +76,14 @@ void mTrs::setfont(QFont &font)
 {
     this->ui->toEdit->setFont(font);
     this->ui->toEdit->update();
+}
+
+void mTrs::setEngine(bool isChecked)
+{
+    if (isChecked)
+        return this->translater->setEngine(static_cast<QAction *>(sender())->data().value<translation_engine>());
+    else
+        return;
 }
 
 mTrs::~mTrs()

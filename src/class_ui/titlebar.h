@@ -14,15 +14,17 @@ class titleBar : public QWidget
     Q_OBJECT
 
 public:
-    QMenu *m_menu;
+    QMenu *m_menu = NULL;
     explicit titleBar(QWidget *parent = nullptr);
     ~titleBar();
+
 public slots:
     void on_toolButton_2_clicked();
+
 private:
-    Ui::titleBar *ui;
+    Ui::titleBar *ui = NULL;
+    QWidget *pWidget = NULL;
     QPoint mPos;
-    QWidget *pWidget = this->parentWidget();
     void initMenu();
     void initTitleBar();
     void mouseDoubleClickEvent(QMouseEvent *event);

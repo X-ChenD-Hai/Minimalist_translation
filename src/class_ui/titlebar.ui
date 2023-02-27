@@ -143,6 +143,11 @@
     </widget>
    </item>
   </layout>
+  <action name="act_menu">
+   <property name="text">
+    <string>1</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

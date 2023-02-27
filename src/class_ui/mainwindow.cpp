@@ -10,7 +10,7 @@
 #include <QMenu>
 #define INITIAL_FROMEDIT_FONT_PIXESIZE 30
 #define INITIAL_TOEDIT_FONT_PIXESIZE 40
-#define INITIAL_WINDOW_SIZE QSize(400, 1030)
+#define INITIAL_WINDOW_SIZE QSize(450, 1030)
 #define INITIAL_MINIMUM_SIZE QSize(100, 200)
 #define INITIAL_WINDOW_POS 50, 50
 
@@ -90,6 +90,30 @@ void MainWindow::initAction()
     m_menu->addAction(act_font_add);
     m_menu->addAction(act_font_minus);
 
+    auto m_trs_eg = new QMenu("设置翻译引擎", m_menu);
+    auto acgr_trs_rg = new QActionGroup(m_trs_eg);
+    auto act_bd_en = new QAction("百度翻译", acgr_trs_rg);
+    auto act_yd_en = new QAction("有道翻译", acgr_trs_rg);
+
+    act_bd_en->setData(translation_engine::TR_BAIDU);
+    act_yd_en->setData(translation_engine::TR_YOUDAO);
+
+    act_bd_en->setCheckable(true);
+    act_yd_en->setCheckable(true);
+
+    connect(act_bd_en, SIGNAL(triggered(bool)), this->mtrs, SLOT(setEngine(bool)));
+    connect(act_yd_en, SIGNAL(triggered(bool)), this->mtrs, SLOT(setEngine(bool)));
+
+    acgr_trs_rg->addAction(act_bd_en);
+    acgr_trs_rg->addAction(act_yd_en);
+
+    m_trs_eg->addAction(act_bd_en);
+    m_trs_eg->addAction(act_yd_en);
+
+    m_menu->addSeparator();
+    m_menu->addMenu(m_trs_eg);
+
+    act_yd_en->trigger();
     act_window_top->trigger();
 }
 
