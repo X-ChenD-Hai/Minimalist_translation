@@ -1,6 +1,6 @@
 # 极简翻译
 ### 更新至[v1.0.3][v1.0.3]
-<img src="_ex\Snipaste_2023-02-27_20-16-34.png" width="30%">
+<img src="_ex\v1.0.3.png" width="30%">
 
 
 
@@ -17,12 +17,12 @@
         - 添加窗口置顶功能
         - 完善字体大小调整功能
         - 优化请求机制
-        - <img src="_ex\Snipaste_2023-02-26_22-32-09.png" width="30%">
+        - <img src="_ex\v1.0.2.png" width="30%">
 
 - [极简翻译v1.0.1][v1.0.1]
     - 版本日志
         - 完成基本翻译功能
-        - <img src="_ex\Snipaste_2023-02-26_22-31-22.png" width="60%">
+        - <img src="_ex\v1.0.1.png" width="60%">
 
 ## 开发环境
 ### 工具包：Qt 5.14.2 MinGW 32-bit      
