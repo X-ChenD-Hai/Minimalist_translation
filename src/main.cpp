@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
     mainWindow.setWindowIcon((char*)"resource\\icon\\右_40x40.png");
     mainWindow.show();
 
+
     app.exec();
     return 0;
 }

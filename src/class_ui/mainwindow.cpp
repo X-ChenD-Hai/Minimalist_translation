@@ -2,12 +2,16 @@
 #include "ui_mainwindow.h"
 #include "mTrs.h"
 #include "qss.h"
+#include <QObject>
 #include <windows.h>
 #include <windowsx.h>
 #include <QAction>
 #include <QDebug>
 #include <QVariant>
 #include <QMenu>
+#include <QKeyEvent>
+#include <QEvent>
+#define D qDebug()
 #define INITIAL_FROMEDIT_FONT_PIXESIZE 30
 #define INITIAL_TOEDIT_FONT_PIXESIZE 40
 #define INITIAL_WINDOW_SIZE QSize(450, 1030)
@@ -20,7 +24,7 @@ typedef enum act_type
     FONT_AMPLIFICATION,
     FONT_REDUCTION,
 } act_type;
-Q_DECLARE_METATYPE(act_type)
+Q_DECLARE_METATYPE(act_type);
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent),
                                           ui(new Ui::MainWindow)
@@ -59,6 +63,7 @@ void MainWindow::initUI()
     // this->setStyleSheet(style.readAll());
     // style.close();
     this->setStyleSheet(M_QSS);
+    // this->installEventFilter(this);
 }
 
 void MainWindow::initAction()
@@ -113,6 +118,15 @@ void MainWindow::initAction()
     m_menu->addSeparator();
     m_menu->addMenu(m_trs_eg);
 
+    auto act_clipborad_tracking = new QAction("跟踪剪贴板",m_menu);
+
+    act_clipborad_tracking->setCheckable(true);
+
+    connect(act_clipborad_tracking, SIGNAL(triggered(bool)), this->mtrs, SLOT(setCilpboardTracking(bool)));
+
+    m_menu->addSeparator();
+    m_menu->addAction(act_clipborad_tracking);
+
     act_yd_en->trigger();
     act_window_top->trigger();
 }
@@ -160,3 +174,4 @@ void MainWindow::setWindowIcon(char *iconPath)
 {
     this->ui->title_bar->setIcon(iconPath);
 }
+

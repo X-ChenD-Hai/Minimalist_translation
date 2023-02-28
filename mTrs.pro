@@ -5,6 +5,7 @@ CONFIG += c++17
 win32-msvc*:QMAKE_CXXFLAGS += /utf-8
 # QMAKE_LFLAGS += "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\""
 
+
 INCLUDEPATH += \
     $$PWD/src/class_ui \
     $$PWD/src/class_mg \
@@ -31,6 +32,8 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RC_ICONS = $$PWD/resource/icon/main.ico
 
 DISTFILES += \
     resource/QSS/main.qss \

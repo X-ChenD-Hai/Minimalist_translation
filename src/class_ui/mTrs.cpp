@@ -23,16 +23,40 @@ mTrs::mTrs(QWidget *parent)
     init_mTrs();
 }
 
+void mTrs::setCilpboardTracking(bool checked)
+{
+    // D << "checked" << checked;
+    if (checked)
+    {
+        if (!this->sysclipboard)
+        {
+            this->sysclipboard = QApplication::clipboard();
+            this->sysclipboard->setObjectName("sysclipboard");
+        }
+        connect(this->sysclipboard, &QClipboard::dataChanged,
+                this, &mTrs::updateFromText);
+    }
+    else
+    {
+        if (this->sysclipboard)
+        {
+            disconnect(this->sysclipboard, &QClipboard::dataChanged,
+                       this, &mTrs::updateFromText);
+        }
+    }
+}
+
 void mTrs::init_mTrs()
 {
     ui->setupUi(this);
     this->previousStr = new QString("");
     this->timer1 = new QTimer(this);
     this->timer2 = new QTimer(this);
+
     this->timer2->setObjectName("timer2");
 
-    connect(this->ui->fromEdit, SIGNAL(textChanged()),
-            this, SLOT(updateFromText()));
+    connect(this->ui->fromEdit, &QTextEdit::textChanged,
+            this, &mTrs::updateFromText);
     connect(this->timer1, SIGNAL(timeout()),
             this, SLOT(updateToText()));
     connect(this->timer2, &QTimer::timeout, this, [&]()
@@ -43,6 +67,12 @@ void mTrs::init_mTrs()
 
 void mTrs::updateFromText()
 {
+    if (sender()->objectName() == "sysclipboard")
+    {
+        disconnect(this->ui->fromEdit, &QTextEdit::textChanged, this, &mTrs::updateFromText);
+        this->ui->fromEdit->setText(this->sysclipboard->text());
+        connect(this->ui->fromEdit, &QTextEdit::textChanged, this, &mTrs::updateFromText);
+    }
     const QString &currentStr = this->ui->fromEdit->toPlainText();
     // D << sender()->objectName();
     this->timer1->stop();

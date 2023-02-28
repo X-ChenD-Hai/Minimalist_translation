@@ -10,10 +10,9 @@ namespace Ui
 
 class MainWindow : public QWidget
 {
+    Q_OBJECT
     friend class titleBar;
     friend class mTrs;
-
-    Q_OBJECT
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -22,8 +21,9 @@ public:
     void setWindowIcon(char *iconPath);
 
 private:
-    Ui::MainWindow *ui=NULL;
-    mTrs *mtrs=NULL;
+    Ui::MainWindow *ui = NULL;
+    mTrs *mtrs = NULL;
+    QTimer *timer = NULL;
     QFont font;
     void initUI();
     bool nativeEvent(const QByteArray &eventType, void *message, long *result);
