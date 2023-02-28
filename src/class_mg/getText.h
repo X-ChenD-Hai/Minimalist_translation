@@ -9,8 +9,8 @@
 
 typedef enum translation_engine
 {
-    TR_BAIDU = 1,
-    TR_YOUDAO,
+    TR_YOUDAO = 1,
+    TR_BAIDU,
 } translation_engine;
 
 Q_DECLARE_METATYPE(translation_engine);
@@ -33,10 +33,10 @@ public:
     ~getText();
 
 private:
-    QNetworkAccessManager *manger=NULL;
-    QNetworkReply *rep=NULL;
+    QNetworkAccessManager *manger = NULL;
+    QNetworkReply *rep = NULL;
     QNetworkRequest req;
-    QJsonDocument *jsonData=NULL;
+    QJsonDocument *jsonData = NULL;
     QString *result = NULL;
     void replyFinshed();
 

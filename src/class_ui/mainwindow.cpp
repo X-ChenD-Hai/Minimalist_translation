@@ -11,19 +11,17 @@
 #include <QMenu>
 #include <QKeyEvent>
 #include <QEvent>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 #define D qDebug()
+#define INITIAL_WINDOW_TOP true
+#define INITIAL_TRANSLATION_ENGINE translation_engine::TR_YOUDAO
 #define INITIAL_FROMEDIT_FONT_PIXESIZE 30
 #define INITIAL_TOEDIT_FONT_PIXESIZE 40
-#define INITIAL_WINDOW_SIZE QSize(450, 1030)
-#define INITIAL_MINIMUM_SIZE QSize(100, 200)
+#define INITIAL_WINDOW_SIZE 450, 1030
+#define INITIAL_MINIMUM_SIZE 100, 200
 #define INITIAL_WINDOW_POS 50, 50
-
-typedef struct settings
-{
-    
-}settings;
-
-
 
 typedef enum act_type
 {
@@ -37,24 +35,82 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent),
                                           ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->loadSettings();
     this->initUI();
+    this->initAction();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete settings;
+}
+
+void MainWindow::loadSettings()
+{
+    this->settings = new Settings;
+    QFile jsonFile("settings.json", this);
+    if (jsonFile.open(QIODevice::ReadOnly))
+    {
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonFile.readAll());
+        QJsonObject rootObj = jsonDoc.object();
+        this->settings->fromedit_font_pixesize = rootObj.value("fromedit_font_pixesize").toInt();
+        D << this->settings->fromedit_font_pixesize;
+        this->settings->toedit_font_pixesize = rootObj.value("toedit_font_pixesize").toInt();
+        D << this->settings->toedit_font_pixesize;
+        this->settings->window_top = rootObj.value("window_top").toBool();
+        D << this->settings->window_top;
+        int engine = rootObj.value("window_top").toInt();
+        switch (engine)
+        {
+        case translation_engine::TR_YOUDAO:
+            this->settings->translation_engine = TR_YOUDAO;
+            break;
+        case translation_engine::TR_BAIDU:
+            this->settings->translation_engine = TR_BAIDU;
+            break;
+        default:
+            this->settings->translation_engine = INITIAL_TRANSLATION_ENGINE;
+            break;
+        }
+        QJsonArray GeometryArry = rootObj.value("Geometry").toArray();
+        for (int i = 0; i < 4; i++)
+        {
+            this->settings->Geometry[i] = GeometryArry[i].toInt();
+        }
+    }
+    else
+    {
+        this->settings->fromedit_font_pixesize = INITIAL_FROMEDIT_FONT_PIXESIZE;
+        this->settings->toedit_font_pixesize = INITIAL_TOEDIT_FONT_PIXESIZE;
+        this->settings->window_top = INITIAL_WINDOW_TOP;
+        this->settings->translation_engine = INITIAL_TRANSLATION_ENGINE;
+        int geom[] = {INITIAL_WINDOW_POS, INITIAL_WINDOW_SIZE};
+        for (int i = 0; i < 4; i++)
+        {
+            this->settings->Geometry[i] = geom[i];
+            D << this->settings->Geometry[i];
+        }
+    }
+    jsonFile.close();
+}
+
+void MainWindow::writeInSettings()
+{
+    
 }
 
 void MainWindow::initUI()
 {
+    Settings &settings = *this->settings;
     this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint);
-    this->move(INITIAL_WINDOW_POS);
-    this->resize(INITIAL_WINDOW_SIZE);
+    this->move(settings.Geometry[0], settings.Geometry[1]);
+    this->resize(settings.Geometry[2], settings.Geometry[3]);
     this->setMinimumSize(INITIAL_MINIMUM_SIZE);
 
     QFont from, to;
-    from.setPixelSize(INITIAL_FROMEDIT_FONT_PIXESIZE);
-    to.setPixelSize(INITIAL_TOEDIT_FONT_PIXESIZE);
+    from.setPixelSize(settings.fromedit_font_pixesize);
+    to.setPixelSize(settings.toedit_font_pixesize);
 
     this->font = to;
 
@@ -63,7 +119,6 @@ void MainWindow::initUI()
     this->mtrs->setfont(this->font);
     this->ui->title_bar->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint);
     this->ui->verticalLayout->addWidget(this->mtrs);
-    this->initAction();
 
     // QFile style("resource\\QSS\\main.qss");
     // style.open(QFile::ReadOnly);
@@ -125,7 +180,7 @@ void MainWindow::initAction()
     m_menu->addSeparator();
     m_menu->addMenu(m_trs_eg);
 
-    auto act_clipborad_tracking = new QAction("跟踪剪贴板",m_menu);
+    auto act_clipborad_tracking = new QAction("跟踪剪贴板", m_menu);
 
     act_clipborad_tracking->setCheckable(true);
 
@@ -134,8 +189,19 @@ void MainWindow::initAction()
     m_menu->addSeparator();
     m_menu->addAction(act_clipborad_tracking);
 
-    act_yd_en->trigger();
-    act_window_top->trigger();
+    switch (this->settings->translation_engine)
+    {
+    case translation_engine::TR_YOUDAO:
+        act_yd_en->trigger();
+        break;
+    case translation_engine::TR_BAIDU:
+        act_bd_en->trigger();
+        break;
+    default:
+        break;
+    }
+    if (this->settings->window_top)
+        act_window_top->trigger();
 }
 
 void MainWindow::act_slot(bool chicked)
@@ -181,4 +247,3 @@ void MainWindow::setWindowIcon(char *iconPath)
 {
     this->ui->title_bar->setIcon(iconPath);
 }
-

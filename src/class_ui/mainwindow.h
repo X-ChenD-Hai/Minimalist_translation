@@ -1,6 +1,15 @@
 #pragma once
 #include "mTrs.h"
 #include <QWidget>
+typedef struct Settings
+{
+    int Geometry[4];
+    int fromedit_font_pixesize;
+    int toedit_font_pixesize;
+    translation_engine translation_engine;
+    bool window_top;
+} Settings;
+
 class titleBar;
 class mTrs;
 namespace Ui
@@ -25,6 +34,9 @@ private:
     mTrs *mtrs = NULL;
     QTimer *timer = NULL;
     QFont font;
+    Settings *settings;
+    void writeInSettings();
+    void loadSettings();
     void initUI();
     bool nativeEvent(const QByteArray &eventType, void *message, long *result);
     void initAction();
