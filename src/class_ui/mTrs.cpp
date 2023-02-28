@@ -4,17 +4,20 @@
 #include <QPixmap>
 #include <QDebug>
 #include <QTimer>
+#include <mainwindow.h>
 #define MAX_WAIT_BACK_INPUT_TIME 1000
 #define MIN_TEST_INTERVAL_TIME 200
 
 #define D qDebug()
+
+class MainWindow;
 
 mTrs::mTrs(QFont from, QFont to, QWidget *parent)
     : QMainWindow(parent), ui(new Ui_mTrs), translater(new getText)
 {
     init_mTrs();
     this->ui->fromEdit->setFont(from);
-    this->ui->fromEdit->setFont(to);
+    this->ui->toEdit->setFont(to);
 }
 
 mTrs::mTrs(QWidget *parent)
@@ -79,14 +82,14 @@ void mTrs::updateFromText()
     // D << currentStr.length();
     // D << currentStr[0];
     int i = currentStr.length();
-    while (i>0&&currentStr.at(i - 1) == '\n')
+    while (i > 0 && currentStr.at(i - 1) == '\n')
     {
         currentStr.chop(1);
         i = currentStr.length();
     }
-    while (i>0&&currentStr.at(0) == '\n')
+    while (i > 0 && currentStr.at(0) == '\n')
     {
-        currentStr.remove(0,1);
+        currentStr.remove(0, 1);
     }
 
     this->timer1->stop();
@@ -125,9 +128,21 @@ void mTrs::setfont(QFont &font)
 void mTrs::setEngine(bool isChecked)
 {
     if (isChecked)
-        return this->translater->setEngine(static_cast<QAction *>(sender())->data().value<translation_engine>());
+    {
+        auto pWidget = static_cast<MainWindow *>(this->parentWidget());
+        pWidget->settings->translation_engine = static_cast<QAction *>(sender())->data().value<translation_engine>();
+        return this->translater->setEngine(pWidget->settings->translation_engine);
+    }
     else
         return;
+}
+
+QMap<QString, int> mTrs::getFont()
+{
+    QMap<QString, int> fontMap;
+    fontMap["fromEdit_pixelSize"] = this->ui->fromEdit->font().pixelSize();
+    fontMap["toEdit_pixelSize"] = this->ui->toEdit->font().pixelSize();
+    return fontMap;
 }
 
 mTrs::~mTrs()

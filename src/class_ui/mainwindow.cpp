@@ -16,6 +16,7 @@
 #include <QJsonArray>
 #define D qDebug()
 #define INITIAL_WINDOW_TOP true
+#define INITIAL_CLIPBOARD_TRACKING false
 #define INITIAL_TRANSLATION_ENGINE translation_engine::TR_YOUDAO
 #define INITIAL_FROMEDIT_FONT_PIXESIZE 30
 #define INITIAL_TOEDIT_FONT_PIXESIZE 40
@@ -43,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent),
 MainWindow::~MainWindow()
 {
     delete ui;
+    this->writeInSettings();
     delete settings;
 }
 
@@ -55,12 +57,10 @@ void MainWindow::loadSettings()
         QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonFile.readAll());
         QJsonObject rootObj = jsonDoc.object();
         this->settings->fromedit_font_pixesize = rootObj.value("fromedit_font_pixesize").toInt();
-        D << this->settings->fromedit_font_pixesize;
         this->settings->toedit_font_pixesize = rootObj.value("toedit_font_pixesize").toInt();
-        D << this->settings->toedit_font_pixesize;
         this->settings->window_top = rootObj.value("window_top").toBool();
-        D << this->settings->window_top;
-        int engine = rootObj.value("window_top").toInt();
+        this->settings->cilpboard_tracking = rootObj.value("cilpboard_tracking").toBool();
+        int engine = rootObj.value("translation_engine").toInt();
         switch (engine)
         {
         case translation_engine::TR_YOUDAO:
@@ -85,6 +85,7 @@ void MainWindow::loadSettings()
         this->settings->toedit_font_pixesize = INITIAL_TOEDIT_FONT_PIXESIZE;
         this->settings->window_top = INITIAL_WINDOW_TOP;
         this->settings->translation_engine = INITIAL_TRANSLATION_ENGINE;
+        this->settings->cilpboard_tracking = INITIAL_CLIPBOARD_TRACKING;
         int geom[] = {INITIAL_WINDOW_POS, INITIAL_WINDOW_SIZE};
         for (int i = 0; i < 4; i++)
         {
@@ -97,7 +98,26 @@ void MainWindow::loadSettings()
 
 void MainWindow::writeInSettings()
 {
-    
+    QFile jsonFile("settings.json", this);
+    if (jsonFile.open(QIODevice::WriteOnly))
+    {
+        QMap fontMap = this->mtrs->getFont();
+        QJsonObject rootObj;
+        rootObj.insert("fromedit_font_pixesize", fontMap["fromEdit_pixelSize"]);
+        rootObj.insert("toedit_font_pixesize", fontMap["toEdit_pixelSize"]);
+        rootObj.insert("window_top", this->settings->window_top);
+        rootObj.insert("cilpboard_tracking", this->settings->cilpboard_tracking);
+        rootObj.insert("translation_engine", int(this->settings->translation_engine));
+        QJsonArray GeometryArry;
+        GeometryArry.append(this->pos().x());
+        GeometryArry.append(this->pos().y());
+        GeometryArry.append(this->size().width());
+        GeometryArry.append(this->size().height());
+        rootObj.insert("Geometry", GeometryArry);
+        QJsonDocument jsonDoc(rootObj);
+        jsonFile.write(jsonDoc.toJson());
+    }
+    jsonFile.close();
 }
 
 void MainWindow::initUI()
@@ -185,10 +205,16 @@ void MainWindow::initAction()
     act_clipborad_tracking->setCheckable(true);
 
     connect(act_clipborad_tracking, SIGNAL(triggered(bool)), this->mtrs, SLOT(setCilpboardTracking(bool)));
+    connect(act_clipborad_tracking, &QAction::triggered, this, [this, act_clipborad_tracking]()
+            { this->settings->cilpboard_tracking = act_clipborad_tracking->isChecked(); });
 
     m_menu->addSeparator();
     m_menu->addAction(act_clipborad_tracking);
 
+    if (this->settings->window_top)
+        act_window_top->trigger();
+    if (this->settings->cilpboard_tracking)
+        act_clipborad_tracking->trigger();
     switch (this->settings->translation_engine)
     {
     case translation_engine::TR_YOUDAO:
@@ -200,11 +226,9 @@ void MainWindow::initAction()
     default:
         break;
     }
-    if (this->settings->window_top)
-        act_window_top->trigger();
 }
 
-void MainWindow::act_slot(bool chicked)
+void MainWindow::act_slot(bool opt)
 {
     QAction *action = static_cast<QAction *>(sender());
     act_type type = action->data().value<act_type>();
@@ -213,10 +237,11 @@ void MainWindow::act_slot(bool chicked)
     {
     case act_type::WIN_TO_TOP:
         flags = this->windowFlags();
-        if (chicked)
+        if (opt)
             flags |= Qt::WindowStaysOnTopHint;
         else
             flags ^= Qt::WindowStaysOnTopHint;
+        this->settings->window_top = opt;
         this->setWindowFlags(flags);
         this->show();
         break;

@@ -5,6 +5,7 @@
 #include <QModelIndex>
 #include <QFileSystemModel>
 #include <QClipboard>
+#include<QMap>
 
 class mTrs : public QMainWindow
 {
@@ -14,6 +15,7 @@ public:
     mTrs(QFont from, QFont to, QWidget *parent = nullptr);
     mTrs(QWidget *parent = nullptr);
     ~mTrs();
+    QMap<QString, int> getFont();
 public slots:
     void updateFromText();
     void updateToText();

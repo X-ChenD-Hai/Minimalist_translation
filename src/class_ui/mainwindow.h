@@ -8,6 +8,7 @@ typedef struct Settings
     int toedit_font_pixesize;
     translation_engine translation_engine;
     bool window_top;
+    bool cilpboard_tracking;
 } Settings;
 
 class titleBar;

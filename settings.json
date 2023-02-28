@@ -1,7 +1,13 @@
 {
-    "Geometry":[50,50,450,1030],
-    "fromedit_font_pixesize":30,
-    "toedit_font_pixesize":40,
-    "translation_engine":2,
-    "window_top":false
+    "Geometry": [
+        184,
+        170,
+        1061,
+        744
+    ],
+    "cilpboard_tracking": true,
+    "fromedit_font_pixesize": 32,
+    "toedit_font_pixesize": 19,
+    "translation_engine": 2,
+    "window_top": false
 }
