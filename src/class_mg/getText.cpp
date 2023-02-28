@@ -37,7 +37,7 @@ void getText::startTranslate(const QString &text)
 {
     this->req.setUrl(this->createUrl(text));
     req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-    if(this->result)
+    if (this->result)
     {
         delete result;
         result = NULL;
@@ -76,7 +76,7 @@ void getText::replyFinshed()
             delete this->jsonData;
             this->jsonData = NULL;
         }
-        
+
         if (this->rep)
         {
             this->rep->deleteLater();
@@ -164,9 +164,13 @@ void getText::analysisYoudaoJson()
     QString s_result = "";
     QJsonObject obj = this->jsonData->object();
     QJsonValue value = obj.value("translateResult");
-    QJsonArray arry = value.toArray()[0].toArray();
+    QJsonArray arry = value.toArray();
     foreach (QJsonValue a, arry)
-        s_result += a.toObject().value("tgt").toString() + "\n";
+    {
+        foreach(QJsonValue i,a.toArray())
+            s_result += i.toObject().value("tgt").toString();
+        s_result += "\n";
+    }
     this->result = new QString(s_result);
 }
 

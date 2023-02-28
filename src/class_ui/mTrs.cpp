@@ -49,6 +49,7 @@ void mTrs::setCilpboardTracking(bool checked)
 void mTrs::init_mTrs()
 {
     ui->setupUi(this);
+    this->ui->fromEdit->setAcceptRichText(false);
     this->previousStr = new QString("");
     this->timer1 = new QTimer(this);
     this->timer2 = new QTimer(this);
@@ -73,8 +74,21 @@ void mTrs::updateFromText()
         this->ui->fromEdit->setText(this->sysclipboard->text());
         connect(this->ui->fromEdit, &QTextEdit::textChanged, this, &mTrs::updateFromText);
     }
-    const QString &currentStr = this->ui->fromEdit->toPlainText();
+    QString currentStr = this->ui->fromEdit->toPlainText();
     // D << sender()->objectName();
+    // D << currentStr.length();
+    // D << currentStr[0];
+    int i = currentStr.length();
+    while (i>0&&currentStr.at(i - 1) == '\n')
+    {
+        currentStr.chop(1);
+        i = currentStr.length();
+    }
+    while (i>0&&currentStr.at(0) == '\n')
+    {
+        currentStr.remove(0,1);
+    }
+
     this->timer1->stop();
     if ((this->previousStr->indexOf(currentStr) == -1 || sender()->objectName() == "timer2") && currentStr != "")
     {

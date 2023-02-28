@@ -1,5 +1,5 @@
 # 极简翻译
-## 更新至[v1.0.4][v1.0.4]
+## 更新至[v1.0.4.1][v1.0.4.1]
 ## 使用说明
 - ### 点击左上角程序图标右侧菜单可可选择功能
     - ### 窗口置顶可使应用停留在所有窗口顶端
@@ -12,6 +12,10 @@
 
 
 # 版本 
+
+- [极简翻译v1.0.4.1][v1.0.4.1]
+    - 版本日志
+        - 修复有道翻译解析不完整问题
 
 - [极简翻译v1.0.4][v1.0.4]
     - 版本日志
@@ -45,6 +49,8 @@
 ### 编辑器vscode
 
 
+
+[v1.0.4.1]:https://github.com/X-ChenD-Hai/Minimalist_translation/blob/master/%E6%9E%81%E7%AE%80%E7%BF%BB%E8%AF%91v1.0.4.1.zip
 
 [v1.0.4]:https://github.com/X-ChenD-Hai/Minimalist_translation/blob/master/%E6%9E%81%E7%AE%80%E7%BF%BB%E8%AF%91v1.0.4.zip
 
