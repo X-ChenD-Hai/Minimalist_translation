@@ -18,6 +18,13 @@
 #define INITIAL_MINIMUM_SIZE QSize(100, 200)
 #define INITIAL_WINDOW_POS 50, 50
 
+typedef struct settings
+{
+    
+}settings;
+
+
+
 typedef enum act_type
 {
     WIN_TO_TOP = 1,
