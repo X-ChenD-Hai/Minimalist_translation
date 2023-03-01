@@ -5,7 +5,15 @@
 #include <QModelIndex>
 #include <QFileSystemModel>
 #include <QClipboard>
-#include<QMap>
+#include <QMap>
+
+typedef struct mTrsSettings
+{
+    int fromEditPixeSize;
+    int toEditPixeSize;
+    int fromEditHeight;
+    int toEditHeight;
+} mTrsSettings;
 
 class mTrs : public QMainWindow
 {
@@ -15,7 +23,8 @@ public:
     mTrs(QFont from, QFont to, QWidget *parent = nullptr);
     mTrs(QWidget *parent = nullptr);
     ~mTrs();
-    QMap<QString, int> getFont();
+    mTrsSettings getSettings();
+    void initSettings(mTrsSettings);
 public slots:
     void updateFromText();
     void updateToText();

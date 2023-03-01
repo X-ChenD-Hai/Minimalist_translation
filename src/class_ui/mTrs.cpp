@@ -12,12 +12,20 @@
 
 class MainWindow;
 
-mTrs::mTrs(QFont from, QFont to, QWidget *parent)
-    : QMainWindow(parent), ui(new Ui_mTrs), translater(new getText)
+void mTrs::initSettings(mTrsSettings settings)
 {
-    init_mTrs();
+    QFont from;
+    QFont to;
+    from.setPixelSize(settings.fromEditPixeSize);
+    to.setPixelSize(settings.toEditPixeSize);
     this->ui->fromEdit->setFont(from);
     this->ui->toEdit->setFont(to);
+    QSizePolicy size_policy;
+    size_policy.setVerticalStretch(settings.fromEditHeight);
+    ui->fromEdit->setSizePolicy(size_policy);
+    size_policy.setVerticalStretch(settings.toEditHeight);
+    ui->toEdit->setSizePolicy(size_policy);
+
 }
 
 mTrs::mTrs(QWidget *parent)
@@ -78,9 +86,6 @@ void mTrs::updateFromText()
         connect(this->ui->fromEdit, &QTextEdit::textChanged, this, &mTrs::updateFromText);
     }
     QString currentStr = this->ui->fromEdit->toPlainText();
-    // D << sender()->objectName();
-    // D << currentStr.length();
-    // D << currentStr[0];
     int i = currentStr.length();
     while (i > 0 && currentStr.at(i - 1) == '\n')
     {
@@ -137,12 +142,15 @@ void mTrs::setEngine(bool isChecked)
         return;
 }
 
-QMap<QString, int> mTrs::getFont()
+mTrsSettings mTrs::getSettings()
 {
-    QMap<QString, int> fontMap;
-    fontMap["fromEdit_pixelSize"] = this->ui->fromEdit->font().pixelSize();
-    fontMap["toEdit_pixelSize"] = this->ui->toEdit->font().pixelSize();
-    return fontMap;
+
+    mTrsSettings settings;
+    settings.fromEditPixeSize = this->ui->fromEdit->font().pixelSize();
+    settings.toEditPixeSize = this->ui->toEdit->font().pixelSize();
+    settings.fromEditHeight = this->ui->fromEdit->size().height();
+    settings.toEditHeight= this->ui->toEdit->size().height();
+    return settings;
 }
 
 mTrs::~mTrs()

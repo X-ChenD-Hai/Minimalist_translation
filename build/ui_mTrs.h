@@ -51,11 +51,14 @@ public:
         splitter = new QSplitter(centralwidget);
         splitter->setObjectName(QString::fromUtf8("splitter"));
         splitter->setLineWidth(0);
+        splitter->setMidLineWidth(0);
         splitter->setOrientation(Qt::Vertical);
-        splitter->setHandleWidth(0);
+        splitter->setHandleWidth(3);
         toEdit = new QTextEdit(splitter);
         toEdit->setObjectName(QString::fromUtf8("toEdit"));
         toEdit->setMinimumSize(QSize(100, 100));
+        toEdit->setLineWidth(0);
+        toEdit->setMidLineWidth(0);
         splitter->addWidget(toEdit);
         fromEdit = new QTextEdit(splitter);
         fromEdit->setObjectName(QString::fromUtf8("fromEdit"));

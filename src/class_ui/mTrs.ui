@@ -32,11 +32,14 @@
       <property name="lineWidth">
        <number>0</number>
       </property>
+      <property name="midLineWidth">
+       <number>0</number>
+      </property>
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
       <property name="handleWidth">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QTextEdit" name="toEdit">
        <property name="minimumSize">
@@ -44,6 +47,12 @@
          <width>100</width>
          <height>100</height>
         </size>
+       </property>
+       <property name="lineWidth">
+        <number>0</number>
+       </property>
+       <property name="midLineWidth">
+        <number>0</number>
        </property>
       </widget>
       <widget class="QTextEdit" name="fromEdit">

@@ -6,9 +6,12 @@ typedef struct Settings
     int Geometry[4];
     int fromedit_font_pixesize;
     int toedit_font_pixesize;
+    int fromedit_height;
+    int toedit_height;
     translation_engine translation_engine;
     bool window_top;
     bool cilpboard_tracking;
+
 } Settings;
 
 class titleBar;

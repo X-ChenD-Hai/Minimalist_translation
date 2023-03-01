@@ -16,6 +16,8 @@
 #include <QJsonArray>
 #define D qDebug()
 #define INITIAL_WINDOW_TOP true
+#define INITIAL_TOEDIT_HEIGHT 100
+#define INITIAL_FROMEDIT_HEIGHT 100
 #define INITIAL_CLIPBOARD_TRACKING false
 #define INITIAL_TRANSLATION_ENGINE translation_engine::TR_YOUDAO
 #define INITIAL_FROMEDIT_FONT_PIXESIZE 30
@@ -78,6 +80,8 @@ void MainWindow::loadSettings()
         {
             this->settings->Geometry[i] = GeometryArry[i].toInt();
         }
+        this->settings->fromedit_height = rootObj.value("fromedit_height").toInt();
+        this->settings->toedit_height = rootObj.value("toedit_height").toInt();
     }
     else
     {
@@ -87,6 +91,9 @@ void MainWindow::loadSettings()
         this->settings->translation_engine = INITIAL_TRANSLATION_ENGINE;
         this->settings->cilpboard_tracking = INITIAL_CLIPBOARD_TRACKING;
         int geom[] = {INITIAL_WINDOW_POS, INITIAL_WINDOW_SIZE};
+        this->settings->fromedit_height = INITIAL_FROMEDIT_HEIGHT;
+        this->settings->toedit_height = INITIAL_TOEDIT_HEIGHT;
+
         for (int i = 0; i < 4; i++)
         {
             this->settings->Geometry[i] = geom[i];
@@ -101,10 +108,13 @@ void MainWindow::writeInSettings()
     QFile jsonFile("settings.json", this);
     if (jsonFile.open(QIODevice::WriteOnly))
     {
-        QMap fontMap = this->mtrs->getFont();
+        mTrsSettings mTrs_settings = this->mtrs->getSettings();
         QJsonObject rootObj;
-        rootObj.insert("fromedit_font_pixesize", fontMap["fromEdit_pixelSize"]);
-        rootObj.insert("toedit_font_pixesize", fontMap["toEdit_pixelSize"]);
+        rootObj.insert("fromedit_font_pixesize", mTrs_settings.fromEditPixeSize);
+        rootObj.insert("toedit_font_pixesize", mTrs_settings.toEditPixeSize);
+        rootObj.insert("toedit_font_pixesize", mTrs_settings.toEditPixeSize);
+        rootObj.insert("toedit_height", mTrs_settings.toEditHeight);
+        rootObj.insert("fromedit_height", mTrs_settings.fromEditHeight);
         rootObj.insert("window_top", this->settings->window_top);
         rootObj.insert("cilpboard_tracking", this->settings->cilpboard_tracking);
         rootObj.insert("translation_engine", int(this->settings->translation_engine));
@@ -130,15 +140,23 @@ void MainWindow::initUI()
 
     QFont from, to;
     from.setPixelSize(settings.fromedit_font_pixesize);
-    to.setPixelSize(settings.toedit_font_pixesize);
 
     this->font = to;
 
-    this->mtrs = new mTrs(from, to, this);
+    mTrsSettings mTrs_settings = {
+        this->settings->fromedit_font_pixesize,
+        this->settings->toedit_font_pixesize,
+        this->settings->fromedit_height,
+        this->settings->toedit_height
+    };
+    this->mtrs = new mTrs(this);
     this->mtrs->setWindowFlags(Qt::Widget);
     this->mtrs->setfont(this->font);
+
     this->ui->title_bar->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint);
     this->ui->verticalLayout->addWidget(this->mtrs);
+
+    this->mtrs->initSettings(mTrs_settings);
 
     // QFile style("resource\\QSS\\main.qss");
     // style.open(QFile::ReadOnly);
