@@ -126,6 +126,7 @@ void mTrs::updateToText()
 
 void mTrs::setfont(QFont &font)
 {
+    D << sender();
     this->ui->toEdit->setFont(font);
     this->ui->toEdit->update();
 }

@@ -97,7 +97,6 @@ void MainWindow::loadSettings()
         for (int i = 0; i < 4; i++)
         {
             this->settings->Geometry[i] = geom[i];
-            D << this->settings->Geometry[i];
         }
     }
     jsonFile.close();
@@ -138,20 +137,17 @@ void MainWindow::initUI()
     this->resize(settings.Geometry[2], settings.Geometry[3]);
     this->setMinimumSize(INITIAL_MINIMUM_SIZE);
 
-    QFont from, to;
-    from.setPixelSize(settings.fromedit_font_pixesize);
-
+    QFont to;
+    to.setPixelSize(settings.toedit_font_pixesize);
     this->font = to;
 
     mTrsSettings mTrs_settings = {
         this->settings->fromedit_font_pixesize,
         this->settings->toedit_font_pixesize,
         this->settings->fromedit_height,
-        this->settings->toedit_height
-    };
+        this->settings->toedit_height};
     this->mtrs = new mTrs(this);
     this->mtrs->setWindowFlags(Qt::Widget);
-    this->mtrs->setfont(this->font);
 
     this->ui->title_bar->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint);
     this->ui->verticalLayout->addWidget(this->mtrs);
@@ -265,11 +261,11 @@ void MainWindow::act_slot(bool opt)
         break;
     case act_type::FONT_REDUCTION:
         this->font.setPixelSize(this->font.pixelSize() - 1);
-        this->mtrs->setfont(font);
+        this->mtrs->setfont(this->font);
         break;
     case act_type::FONT_AMPLIFICATION:
         this->font.setPixelSize(this->font.pixelSize() + 1);
-        this->mtrs->setfont(font);
+        this->mtrs->setfont(this->font);
         break;
     default:
         break;
