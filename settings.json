@@ -1,13 +1,15 @@
 {
     "Geometry": [
-        -249,
-        362,
-        1764,
-        324
+        364,
+        300,
+        930,
+        702
     ],
-    "cilpboard_tracking": true,
-    "fromedit_font_pixesize": 32,
-    "toedit_font_pixesize": 38,
-    "translation_engine": 2,
-    "window_top": false
+    "cilpboard_tracking": false,
+    "fromedit_font_pixesize": 30,
+    "fromedit_height": 516,
+    "toedit_font_pixesize": 40,
+    "toedit_height": 100,
+    "translation_engine": 1,
+    "window_top": true
 }
