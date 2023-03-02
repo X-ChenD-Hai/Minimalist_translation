@@ -128,3 +128,7 @@ build/release/translations/qt_ru.qm
 build/release/translations/qt_sk.qm
 build/release/translations/qt_uk.qm
 build/release/translations/qt_zh_TW.qm
+build/mTrs_resource.rc
+build/debug/mTrs_resource_res.o
+build/release/mTrs_resource_res.o
+build/release/极简翻译.exe

@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     MainWindow mainWindow;
-    mainWindow.setWindowTitle((char*)"------极简翻译------");
+    mainWindow.setWindowTitle((char*)"极简翻译");
     mainWindow.setWindowIcon((char*)"resource\\icon\\右_40x40.png");
     mainWindow.show();
 

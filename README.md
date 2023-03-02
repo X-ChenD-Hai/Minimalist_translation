@@ -1,5 +1,5 @@
 # 极简翻译
-## 更新至[v1.0.4.1][v1.0.4.1]
+## 更新至[v1.0.5][v1.0.5]
 ## 使用说明
 - ### 点击左上角程序图标右侧菜单可可选择功能
     - ### 窗口置顶可使应用停留在所有窗口顶端
@@ -12,6 +12,10 @@
 
 
 # 版本 
+
+- [极简翻译v1.0.5][v1.0.5]
+    - 版本日志
+        - 添加配置记忆功能
 
 - [极简翻译v1.0.4.1][v1.0.4.1]
     - 版本日志
@@ -42,6 +46,7 @@
         - <img src="_ex\v1.0.1.png" width="60%">
 
 ## 开发环境
+### Windows11
 ### 工具包：Qt 5.14.2 MinGW 32-bit      
      QT += core gui widgets ntwork
 ### 翻译引擎：有道翻译
@@ -49,6 +54,8 @@
 ### 编辑器vscode
 
 
+
+[v1.0.5]:https://github.com/X-ChenD-Hai/Minimalist_translation/blob/master/%E6%9E%81%E7%AE%80%E7%BF%BB%E8%AF%91v1.0.5.zip
 
 [v1.0.4.1]:https://github.com/X-ChenD-Hai/Minimalist_translation/blob/master/%E6%9E%81%E7%AE%80%E7%BF%BB%E8%AF%91v1.0.4.1.zip
 
