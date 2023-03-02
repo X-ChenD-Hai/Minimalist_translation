@@ -25,7 +25,6 @@ void mTrs::initSettings(mTrsSettings settings)
     ui->fromEdit->setSizePolicy(size_policy);
     size_policy.setVerticalStretch(settings.toEditHeight);
     ui->toEdit->setSizePolicy(size_policy);
-
 }
 
 mTrs::mTrs(QWidget *parent)
@@ -86,6 +85,9 @@ void mTrs::updateFromText()
         connect(this->ui->fromEdit, &QTextEdit::textChanged, this, &mTrs::updateFromText);
     }
     QString currentStr = this->ui->fromEdit->toPlainText();
+    if (currentStr.mid(currentStr.length() / 2) ==
+        currentStr.mid(0, currentStr.length() / 2))
+        currentStr = currentStr.mid(currentStr.length() / 2);
     int i = currentStr.length();
     while (i > 0 && currentStr.at(i - 1) == '\n')
     {
@@ -150,7 +152,7 @@ mTrsSettings mTrs::getSettings()
     settings.fromEditPixeSize = this->ui->fromEdit->font().pixelSize();
     settings.toEditPixeSize = this->ui->toEdit->font().pixelSize();
     settings.fromEditHeight = this->ui->fromEdit->size().height();
-    settings.toEditHeight= this->ui->toEdit->size().height();
+    settings.toEditHeight = this->ui->toEdit->size().height();
     return settings;
 }
 

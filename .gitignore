@@ -66,8 +66,6 @@ build/Makefile
 build/Makefile.Debug
 build/Makefile.Release
 settings.json
-build/mTrs_resource.rc
-build/debug/mTrs_resource_res.o
 build/release/D3Dcompiler_47.dll
 build/release/getText.o
 build/release/libEGL.dll
@@ -86,7 +84,7 @@ build/release/moc_mTrs.o
 build/release/moc_predefs.h
 build/release/moc_titlebar.cpp
 build/release/moc_titlebar.o
-build/release/mTrs_resource_res.o
+build/release/mTrs.exe
 build/release/mTrs.o
 build/release/opengl32sw.dll
 build/release/Qt5Core.dll
@@ -95,7 +93,6 @@ build/release/Qt5Network.dll
 build/release/Qt5Svg.dll
 build/release/Qt5Widgets.dll
 build/release/titlebar.o
-build/release/极简翻译.exe
 build/release/bearer/qgenericbearer.dll
 build/release/iconengines/qsvgicon.dll
 build/release/imageformats/qgif.dll
@@ -131,3 +128,7 @@ build/release/translations/qt_ru.qm
 build/release/translations/qt_sk.qm
 build/release/translations/qt_uk.qm
 build/release/translations/qt_zh_TW.qm
+build/mTrs_resource.rc
+build/debug/mTrs_resource_res.o
+build/release/mTrs_resource_res.o
+build/release/极简翻译.exe
