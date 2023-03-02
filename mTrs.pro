@@ -33,7 +33,7 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-# RC_ICONS = $$PWD/resource/icon/main.ico
+RC_ICONS = $$PWD/resource/icon/main.ico
 
 DISTFILES += \
     resource/QSS/main.qss \
