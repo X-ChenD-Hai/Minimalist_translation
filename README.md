@@ -47,10 +47,14 @@
 
 ## 开发环境
 ### Windows11
+
 ### 工具包：Qt 5.14.2 MinGW 32-bit      
      QT += core gui widgets ntwork
+
+
 ### 翻译引擎：有道翻译
 ### 翻译引擎：百度翻译高级版
+
 ### 编辑器vscode
 
 
