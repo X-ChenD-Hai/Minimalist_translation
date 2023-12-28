@@ -1,0 +1,5 @@
+.MTranslation {
+    background-image: url(":/icons/main.ico");
+    background-color: #1f1f1f;
+    margin: 0%;
+}
