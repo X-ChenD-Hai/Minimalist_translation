@@ -5,6 +5,8 @@
     <qresource prefix="qss">
         <file alias="main.qss">style.qss</file>
     </qresource>
+    <qresource prefix="video">
+    </qresource>
     <qresource prefix = "icons">
         <file alias="main.ico" >icon\main.ico</file>
     </qresource>

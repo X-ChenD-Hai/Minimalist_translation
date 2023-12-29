@@ -1,5 +1,5 @@
-.MTranslation {
-    background-image: url(":/icons/main.ico");
+* {
     background-color: #1f1f1f;
+    color: bisque;
     margin: 0%;
 }
