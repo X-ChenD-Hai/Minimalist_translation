@@ -9,7 +9,7 @@
 #include <QMouseEvent>
 #include <QMenu>
 #include <QTimer>
-#include <QSystemTrayIcon>
+#include <QCompleter>
 using namespace TranslateEngines;
 // GLOBAL_TYPPE
 struct
@@ -45,6 +45,7 @@ void G_setWindowNotTopmost(HWND hWnd)
 {
     SetWindowPos(hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 }
+
 // GLOBAL_VARIATE
 QStringList::iterator G_find(QStringList::iterator f, QStringList::iterator t, const QString &_s)
 {
@@ -53,6 +54,7 @@ QStringList::iterator G_find(QStringList::iterator f, QStringList::iterator t, c
             return f;
     return t;
 }
+
 // INIT_MEMBER_FUNC
 inline void MTranslation::initAction()
 {
@@ -86,23 +88,24 @@ inline void MTranslation::initWidget()
     sys_clipboard = QApplication::clipboard();
     textEdit = new QPlainTextEdit(this);
     textBro = new QTextBrowser(this);
-    auto spliter_text = new QSplitter(this);
-    QToolButton *btn = new QToolButton(this);
-    menubar = new QMenuBar(this);
-
     combox_f = new QComboBox(this);
     combox_t = new QComboBox(this);
+    menubar = new QMenuBar(this);
+    sysicon = new QSystemTrayIcon(this);
+
+    auto spliter_text = new QSplitter(this);
+    QToolButton *btn = new QToolButton(this);
+
+    combox_f->setEditable(true);
+    combox_t->setEditable(true);
+
+    QCompleter *pCompleter_f = new QCompleter(combox_f->model(), this);
+    QCompleter *pCompleter_t = new QCompleter(combox_t->model(), this);
+
+    combox_f->setCompleter(pCompleter_f);
+    combox_t->setCompleter(pCompleter_t);
 
     g_timer.start(500);
-    connect(&g_timer, &QTimer::timeout, [&]()
-            {
-                auto p = mapFromGlobal(QCursor::pos());
-                if (ui->widgetTittleBar->rect().contains(p))
-                {if(menubar->isHidden())
-                menubar->show();}
-                else
-                if(!menubar->isHidden())
-                menubar->hide(); });
 
     g_menu.options = menubar->addMenu("选项");
     g_menu.options->addAction(g_act.showTop);
@@ -115,6 +118,10 @@ inline void MTranslation::initWidget()
     g_menu.options->addAction(g_act.quit);
 
     g_menu.options->setToolTipsVisible(true);
+
+    sysicon->setIcon(QIcon(":/icons/main.ico"));
+
+    sysicon->setContextMenu(g_menu.options);
 
     setMenuBar(menubar);
 
@@ -158,59 +165,31 @@ inline void MTranslation::initFrameWindow()
     setWindowIcon(QIcon(R"(:icons/main.ico)"));
 }
 
-inline void MTranslation::initSysIcon()
-{
-
-    //    定义托盘图标，并设置父控件为mainwindow
-    QSystemTrayIcon *icon = new QSystemTrayIcon(this);
-    //    挑一个顺眼的icon，路径从qrc中复制即可
-    icon->setIcon(QIcon(":/icons/main.ico"));
-
-    icon->setContextMenu(g_menu.options);
-
-    //    设置单击显示主界面
-    connect(icon, &QSystemTrayIcon::activated, [=](QSystemTrayIcon::ActivationReason r)
-            {
-        if (r == QSystemTrayIcon::ActivationReason::Trigger)
-            emit g_act.showhide->triggered(); });
-    //    显示托盘图标
-    icon->show();
-}
-
 inline void MTranslation::initConnection()
 {
     connect(g_act.showTop, &QAction::triggered, this, showTop_triggered);
     connect(g_act.trackClipboard, &QAction::triggered, this, trackClipboard_triggered);
     connect(g_act.transInTime, &QAction::triggered, this, transInTime_triggered);
     connect(g_act.translate, &QAction::triggered, this, translate);
-    connect(g_act.quit, &QAction::triggered, [&]()
-            { QCoreApplication::quit(); });
-    connect(g_act.showhide, &QAction::triggered, [&]()
-            {
-        if (isHidden())
-        {
-            show();
-            g_act.showhide->setText("隐藏窗口");
-        }
-        else
-        {
-            
-                hide();
-                g_act.showhide->setText("显示主窗口");
-            
-        } });
+    connect(g_act.showhide, &QAction::triggered, this, showhide_triggered);
+    connect(g_act.quit, &QAction::triggered, &QCoreApplication::quit);
+
     connect(g_hotKeys.showhide, &QHotkey::activated, g_act.showhide, &QAction::trigger);
 
+    connect(sysicon, &QSystemTrayIcon::activated, this, sysicon_activated);
+
     connect(trs, &Translation::successed, textBro, &QTextBrowser::setPlainText);
-    connect(combox_f, &QComboBox::currentTextChanged, [&](const QString &str)
-            { engine->__from = engine->supportfrom()[str]; });
-    connect(combox_t, &QComboBox::currentTextChanged, [&](const QString &str)
-            { engine->__to = engine->supportto()[str]; });
+
+    connect(&g_timer, &QTimer::timeout, this, g_timer_timeout);
+
+    connect(combox_f, &QComboBox::currentIndexChanged, this, combox_f_currentIndexChanged);
+    connect(combox_t, &QComboBox::currentIndexChanged, this, combox_t_currentIndexChanged);
 }
 
 inline void MTranslation::preRun()
 {
     start_time = QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
+    sysicon->show();
     Translation::loadCache("a.cache");
     auto engine = new Youdao("74b31a9fb7b2c903", "0xlLu49lEWbe13Oel18peX69wZ7OYTj8");
     loadEngine(engine);
@@ -227,7 +206,6 @@ MTranslation::MTranslation(QWidget *parent)
     initWidget();
     initFrameWindow();
     initConnection();
-    initSysIcon();
     preRun();
     update();
 }
@@ -271,8 +249,8 @@ void MTranslation::loadEngine(TransEngine *_engine)
 {
     engine = _engine;
     auto lf = engine->supportfrom().keys();
-    lf.erase(G_find(lf.begin(), lf.end(), engine->defaultFrom()));
     auto lt = engine->supportto().keys();
+    lf.erase(G_find(lf.begin(), lf.end(), engine->defaultFrom()));
     lt.erase(G_find(lt.begin(), lt.end(), engine->defaultTo()));
     combox_f->addItem(engine->defaultFrom());
     combox_t->addItem(engine->defaultTo());
@@ -291,6 +269,46 @@ void MTranslation::transInTime_triggered(bool ck)
         disconnect(textEdit, &QPlainTextEdit::textChanged, this, translate);
 }
 
+void MTranslation::showhide_triggered()
+{
+    if (isHidden())
+    {
+        show();
+        g_act.showhide->setText("隐藏窗口");
+    }
+    else
+    {
+        hide();
+        g_act.showhide->setText("显示主窗口");
+    }
+}
+
+void MTranslation::combox_t_currentIndexChanged(int index)
+{
+    auto _text = combox_t->itemText(index);
+    auto lt = engine->supportto();
+    if (auto i = lt.find(_text); i != lt.end())
+        engine->__to = i.value();
+    else
+    {
+        combox_f->removeItem(index);
+        combox_f->setCurrentIndex(0);
+    }
+}
+
+void MTranslation::combox_f_currentIndexChanged(int index)
+{
+    auto _text = combox_f->itemText(index);
+    auto lt = engine->supportfrom();
+    if (auto i = lt.find(_text); i != lt.end())
+        engine->__from = i.value();
+    else
+    {
+        combox_f->removeItem(index);
+        combox_f->setCurrentIndex(0);
+    }
+}
+
 void MTranslation::showTop_triggered(bool ck)
 {
 #ifdef Q_OS_WIN
@@ -299,6 +317,24 @@ void MTranslation::showTop_triggered(bool ck)
     else
         G_setWindowNotTopmost(reinterpret_cast<HWND>(winId()));
 #endif
+}
+
+void MTranslation::g_timer_timeout()
+{
+    auto p = mapFromGlobal(QCursor::pos());
+    if (ui->widgetTittleBar->rect().contains(p))
+    {
+        if (menubar->isHidden())
+            menubar->show();
+    }
+    else if (!menubar->isHidden())
+        menubar->hide();
+}
+
+void MTranslation::sysicon_activated(QSystemTrayIcon::ActivationReason r)
+{
+    if (r == QSystemTrayIcon::ActivationReason::Trigger)
+        emit g_act.showhide->triggered();
 }
 
 void MTranslation::trackClipboard_triggered(bool ck)
@@ -315,7 +351,7 @@ void MTranslation::trackClipboard_triggered(bool ck)
 
 void MTranslation::on_pushButtonC_clicked()
 {
-    hide();
+    emit g_act.showhide->trigger();
 }
 
 void MTranslation::setCentralWidget(QWidget *widget)

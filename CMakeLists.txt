@@ -42,7 +42,7 @@ add_library(${resource_lib} SHARED ${resource_srcs})
 target_include_directories(${trans_lib} PRIVATE src/core)
 add_executable(${PROJECT_NAME}
 
-    WIN32 # If you need a terminal for debug, please comment this statement
+    # WIN32 # If you need a terminal for debug, please comment this statement
     ${ui_srcs}
     test/main.cpp
 )

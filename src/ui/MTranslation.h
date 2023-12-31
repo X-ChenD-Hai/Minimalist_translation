@@ -6,19 +6,21 @@
 #include "core/engines/Youdao.h"
 #include "lib/frameless/framelesswindow.h"
 #include "ui_MTranslation.h"
+
 #include <QMainWindow>
 #include <QApplication>
 #include <QPixmap>
 #include <QFile>
 #include <QUrl>
-#include <QPushButton>
+#include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPlainTextEdit>
 #include <QTextBrowser>
-#include <QVBoxLayout>
 #include <QMenuBar>
 #include <QClipboard>
 #include <QComboBox>
+#include <QSystemTrayIcon>
+
 using namespace TranslateEngines;
 
 class MTranslation : public CFramelessWindow
@@ -26,12 +28,20 @@ class MTranslation : public CFramelessWindow
     Q_OBJECT
 
 public slots:
+    // AUTO LINK
     void on_pushButtonMax_clicked();
     void on_pushButtonMin_clicked();
     void on_pushButtonC_clicked();
+
+    // HANDER LINK
+    void g_timer_timeout();
+    void sysicon_activated(QSystemTrayIcon::ActivationReason r);
     void trackClipboard_triggered(bool ck);
     void showTop_triggered(bool ck);
     void transInTime_triggered(bool ck);
+    void showhide_triggered();
+    void combox_t_currentIndexChanged(int index);
+    void combox_f_currentIndexChanged(int index);
     void translate();
     void loadEngine(TransEngine *_engine);
 
@@ -48,14 +58,12 @@ private:
     inline void initAction();
     inline void initStyle();
     inline void initFrameWindow();
-    inline void initSysIcon();
     inline void preRun();
 
 public:
     MTranslation(QWidget *parent = nullptr);
     ~MTranslation();
 
-private:
 private:
     QWidget *w;
     QVBoxLayout *main;
@@ -65,6 +73,7 @@ private:
     QMenuBar *menubar;
     QComboBox *combox_f;
     QComboBox *combox_t;
+    QSystemTrayIcon *sysicon;
 
     qint64 request_time;
     qint64 resply_time;
