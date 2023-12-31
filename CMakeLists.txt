@@ -7,20 +7,26 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_DEBUG_POSTFIX "_d")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 find_package(Qt6 COMPONENTS Widgets Network REQUIRED) # Qt COMPONENTS
 
+set(trans_lib trans)
+set(resource_lib resource)
+
 file(GLOB ui_srcs src/ui/*.cpp
     src/ui/*.ui
     src/ui/*.rc
+    lib/frameless/framelesswindow.cpp
 )
-file(GLOB trans_srcs src/lib/core/*.cpp
-    src/lib/core/engines/*.cpp
+file(GLOB trans_srcs src/core/*.cpp
+    src/core/engines/*.cpp
 )
-file(GLOB resource_srcs src/lib/resourse/*.cpp
+file(GLOB resource_srcs src/resourse/*.cpp
     resource/res.qrc
 )
 
@@ -29,20 +35,40 @@ include_directories(
     src
 )
 
-set(trans_lib trans)
-set(resource_lib resource)
+file(COPY lib/QHotkey/bin/libQHotkey.dll DESTINATION ${CMAKE_BINARY_DIR}/../bin)
 
-add_library(${trans_lib}d SHARED ${trans_srcs})
+add_library(${trans_lib} SHARED ${trans_srcs})
 add_library(${resource_lib} SHARED ${resource_srcs})
-include_directories(${trans_lib}d PRIVATE src/lib/core)
-add_executable(${PROJECT_NAME}d
+target_include_directories(${trans_lib} PRIVATE src/core)
+add_executable(${PROJECT_NAME}
 
-    # WIN32 # If you need a terminal for debug, please comment this statement
+    WIN32 # If you need a terminal for debug, please comment this statement
     ${ui_srcs}
     test/main.cpp
 )
-target_compile_definitions(${trans_lib}d PRIVATE -DLIBRARY)
 
-target_link_libraries(${trans_lib}d PRIVATE Qt6::Widgets PUBLIC Qt6::Network) # Qt6 Shared Library
-target_link_libraries(${resource_lib} PRIVATE Qt6::Widgets) # Qt6 Shared Library
-target_link_libraries(${PROJECT_NAME}d PRIVATE Qt6::Widgets PRIVATE ${trans_lib}d PRIVATE ${resource_lib}) # Qt6 Shared Library
+target_link_directories(${PROJECT_NAME} PRIVATE lib/QHotkey/bin/)
+target_include_directories(${PROJECT_NAME} PRIVATE ./
+    PRIVATE include)
+
+target_compile_definitions(${trans_lib} PRIVATE -DLIBRARY)
+target_compile_definitions(${PROJECT_NAME} PRIVATE -DQHOTKEY_LIB)
+target_link_libraries(${trans_lib} PUBLIC Qt6::Network)
+target_link_libraries(${resource_lib} PRIVATE Qt6::Widgets)
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE Qt6::Widgets
+    PRIVATE Dwmapi.lib
+    PRIVATE QHotkey
+    PRIVATE ${trans_lib}
+    PRIVATE ${resource_lib})
+
+add_executable(
+    test1
+    test/test1.cpp
+)
+target_compile_definitions(test1 PRIVATE -DQHOTKEY_LIB)
+target_include_directories(test1 PRIVATE lib/QHotkey/)
+target_link_directories(test1 PRIVATE lib/QHotkey/bin)
+target_link_libraries(test1
+    PRIVATE QHotkey
+    PRIVATE Qt6::Widgets)

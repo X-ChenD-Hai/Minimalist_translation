@@ -1,5 +1,49 @@
 * {
     background-color: #1f1f1f;
-    color: bisque;
-    margin: 0%;
+    color: rgb(224, 224, 224);
+    padding: 0px;
+    margin: 0px;
+    spacing: 0px;
+}
+QMenuBar#menubar::item{
+    margin-top: 3px;
+    padding-top: 4px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+QMenuBar#menubar::item:selected{
+    background-color: rgb(79, 79, 79);
+}
+QMenu::item:selected{
+    background-color: rgb(79, 79, 79);
+}
+#widgetTittleBar>*{
+    margin-top: 3px;
+    padding-top: 5px;
+    margin-left: 3px;
+    margin-bottom: 3px;
+}
+
+QTextBrowser,
+QPlainTextEdit {
+    padding: 0px;
+    margin: 0px;
+    spacing: 0px;
+    padding: 0px;
+    border: 1px solid rgb(121, 121, 121);
+    selection-background-color: rgb(123, 123, 123);
+    outline: none;
+}
+
+
+
+QTextBrowser:focus,
+QPlainTextEdit:focus {
+    outline: none;
+    border: 1px solid rgb(173, 173, 173);
+}
+
+QMenuBar::item:selected {
+    background-color: gray;
+    color: honeydew;
 }
