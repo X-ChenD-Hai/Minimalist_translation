@@ -17,7 +17,7 @@ public:
     {
         QString name;
         QString details[1024];
-        unsigned long id;
+        qlonglong id;
         bool enable_cache = false;
     } EngineInfo;
 

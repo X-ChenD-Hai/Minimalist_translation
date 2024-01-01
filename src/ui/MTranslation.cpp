@@ -84,7 +84,7 @@ inline void MTranslation::initAction()
 inline void MTranslation::initWidget()
 {
     w = new QWidget(this);
-    trs = new Translation(this);
+    trs = new Translation("",this);
     sys_clipboard = QApplication::clipboard();
     textEdit = new QPlainTextEdit(this);
     textBro = new QTextBrowser(this);
@@ -190,7 +190,6 @@ inline void MTranslation::preRun()
 {
     start_time = QDateTime::currentDateTimeUtc().toMSecsSinceEpoch();
     sysicon->show();
-    Translation::loadCache("a.cache");
     auto engine = new Youdao("74b31a9fb7b2c903", "0xlLu49lEWbe13Oel18peX69wZ7OYTj8");
     loadEngine(engine);
 }
@@ -212,7 +211,6 @@ MTranslation::MTranslation(QWidget *parent)
 
 MTranslation::~MTranslation()
 {
-    Translation::saveCache("a.cache");
 }
 
 void MTranslation::setWindowTitle(const QString &tittle)

@@ -2,3 +2,5 @@ build
 .vscode
 _src
 **/*.zip
+.CodeCounter
+bin
