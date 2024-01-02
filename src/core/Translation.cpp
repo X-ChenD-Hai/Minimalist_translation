@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS\
         count INT NOT NULL\
     );"
 typedef QHash<QString, TransEngine *> EngineList;
+
 EngineList g_engine_list;
 auto hash1 = QCryptographicHash(QCryptographicHash::Md5);
 auto hash2 = QCryptographicHash(QCryptographicHash::Sha256);
@@ -107,8 +108,8 @@ void Translation::update(const QString &_text)
             return;
         }
     else
-        qDebug()<<query.lastError().text();
-
+        qDebug() << query.lastError().text();
+    QString label = __p_trans_engine->label();
     QByteArray data;
     QNetworkReply *reply;
     auto request = __p_trans_engine->creatRequests(_text);
@@ -143,13 +144,16 @@ void Translation::update(const QString &_text)
         if (query.exec())
             i = query.lastInsertId().toLongLong();
     }
-    reply->setProperty("from_hash_id", hash_id);
-    reply->setProperty("create_time", QDateTime::currentMSecsSinceEpoch());
-    reply->setProperty("engine_id", __p_trans_engine->__info.id);
-    reply->setProperty("from_id", i);
+    if (find(label))
+    {
+        reply->setProperty("from_hash_id", hash_id);
+        reply->setProperty("create_time", QDateTime::currentMSecsSinceEpoch());
+        reply->setProperty("engine_id", find(label)->__info.id);
+        reply->setProperty("from_id", i);
 
-    QObject::connect(
-        reply, &QNetworkReply::finished, this, reply_finished);
+        QObject::connect(
+            reply, &QNetworkReply::finished, this, reply_finished);
+    }
 }
 
 void Translation::reply_finished()
@@ -158,11 +162,11 @@ void Translation::reply_finished()
     QByteArray cache;
     auto reply = qobject_cast<QNetworkReply *>(sender());
     QString result = __p_trans_engine->parseResult(reply, errorcode, cache);
+
     emit finished(errorcode, result);
     if (errorcode == 0)
     {
         emit successed(result);
-
         auto hsh = hsah(result);
         qlonglong id = 0;
         query.prepare("SELECT id FROM tbl_text WHERE hash=?;");
@@ -197,11 +201,8 @@ void Translation::reply_finished()
     {
 
         emit error(errorcode, result);
-        reply->deleteLater();
-        query.prepare("DELETE FROM tbl_text WHERE id = ?;");
-        query.bindValue(0, reply->property("from_id"));
-        query.exec();
     };
+    reply->deleteLater();
 }
 
 void Translation::unregist(const QString &_label)
