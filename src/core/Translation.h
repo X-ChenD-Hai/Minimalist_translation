@@ -1,5 +1,6 @@
 #ifndef TRANSLATION_H
 #define TRANSLATION_H
+#include "TransEngine.h"
 #include <QString>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -7,10 +8,12 @@
 #include <QSqlDatabase>
 #include <QHash>
 #include <QSqlQuery>
-#include "TransEngine.h"
+#include <QThread>
+#include <QMutex>
+#include <QWaitCondition>
 class TransEngine;
 class QSqlDatabase;
-class LIB_EXPORT Translation : public QObject
+class LIB_EXPORT Translation : public QThread
 {
     Q_OBJECT
 public slots:
@@ -18,6 +21,8 @@ public slots:
     void setEngine(TransEngine *_engine);
 
 private slots:
+    virtual void run() override;
+    void translate(QNetworkAccessManager *_manager);
     void reply_finished();
 
 Q_SIGNALS:
@@ -45,12 +50,16 @@ private:
     TransEngine *__p_trans_engine = nullptr;
 
 private:
-    QNetworkAccessManager* __net_manager;
     QSqlDatabase __database;
     QSqlQuery query;
     bool databaseInited = false;
     QString __dbpath;
     QString __stoargeFolder;
+    QString __text;
+    bool __run;
+    QMutex __mutex;
+    QWaitCondition __wait;
+    QThread * __subthread;
 };
 
 #endif // TRANSLATION_H

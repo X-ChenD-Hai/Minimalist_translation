@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS\
     tbl_text (\
         id INTEGER PRIMARY KEY AUTOINCREMENT,\
         hash BLOB NOT NULL,\
-        text TEXT NOT NULL UNIQUE,\
+        text TEXT NOT NULL UNIQUE\
     );"
 #define DB_INIT_REPLY "CREATE TABLE IF NOT EXISTS\
     tbl_reply (\
@@ -86,10 +86,34 @@ void Translation::setEngine(TransEngine *_engine)
             _engine->__info.id = query.lastInsertId().toLongLong();
     }
 }
+
+void Translation::run()
+{
+    QNetworkAccessManager manager;
+    __subthread = QThread::currentThread();
+    while (__run)
+    {
+        __mutex.lock();
+        translate(&manager);
+        QThread::msleep(500);
+        __wait.wait(&__mutex);
+        __mutex.unlock();
+    }
+}
+
 void Translation::update(const QString &_text)
 {
+    __text = _text;
+    __wait.notify_one();
+}
 
-    QByteArray hash_id = hsah(_text + __p_trans_engine->__to + __p_trans_engine->label());
+void Translation::translate(QNetworkAccessManager *_manager)
+{
+    __text = __text.trimmed();
+    if (__text.isEmpty())
+        return;
+
+    QByteArray hash_id = hsah(__text + __p_trans_engine->__to + __p_trans_engine->label());
     query.prepare("SELECT tbl_text.text, tbl_reply.id FROM tbl_text JOIN tbl_reply ON tbl_text.id = tbl_reply.to_id WHERE tbl_reply.from_hash_id = ?;");
     query.bindValue(0, hash_id);
     if (query.exec())
@@ -99,7 +123,7 @@ void Translation::update(const QString &_text)
             qlonglong id = query.value(1).toLongLong();
 
             query.prepare("UPDATE tbl_reply SET count = count + 1 ,timestat=? WHERE id = ?;");
-            query.bindValue(0, QDateTime::currentSecsSinceEpoch());
+            query.bindValue(0, QDateTime::currentMSecsSinceEpoch());
             query.bindValue(1, id);
 
             query.exec();
@@ -111,16 +135,16 @@ void Translation::update(const QString &_text)
         qDebug() << query.lastError().text();
     QString label = __p_trans_engine->label();
     QByteArray data;
-    QNetworkReply *reply;
-    auto request = __p_trans_engine->creatRequests(_text);
+    QNetworkReply *reply = nullptr;
+    auto request = __p_trans_engine->creatRequests(__text);
     if (!request)
         return;
     if (__p_trans_engine->createPostData(&data))
-        reply = __net_manager->post(*request, data);
+        reply = _manager->post(*request, data);
     else
-        reply = __net_manager->get(*request);
+        reply = _manager->get(*request);
     delete request;
-    auto hsh = hsah(_text);
+    auto hsh = hsah(__text);
     qlonglong i = 0;
     int j = 0;
     query.prepare("SELECT id FROM tbl_text WHERE hash=?;");
@@ -140,7 +164,7 @@ void Translation::update(const QString &_text)
     {
         query.prepare("INSERT INTO tbl_text (hash,text) VALUES(?,?);");
         query.bindValue(0, hsh);
-        query.bindValue(1, _text);
+        query.bindValue(1, __text);
         if (query.exec())
             i = query.lastInsertId().toLongLong();
     }
@@ -150,9 +174,10 @@ void Translation::update(const QString &_text)
         reply->setProperty("create_time", QDateTime::currentMSecsSinceEpoch());
         reply->setProperty("engine_id", find(label)->__info.id);
         reply->setProperty("from_id", i);
-
-        QObject::connect(
-            reply, &QNetworkReply::finished, this, reply_finished);
+        QObject::connect(reply, &QNetworkReply::finished, this, reply_finished);
+        QEventLoop loop;
+        QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();
     }
 }
 
@@ -242,13 +267,13 @@ QStringList Translation::allRegistedEngines()
 }
 
 Translation::Translation(TransEngine *_engine, const QString &_stoargeFolder,
-                         QObject *_parent) : QObject(_parent), __stoargeFolder(_stoargeFolder)
+                         QObject *_parent) : QThread(_parent), __stoargeFolder(_stoargeFolder)
 {
     setEngine(_engine);
     init();
 }
 
-Translation::Translation(const QString &_stoargeFolder, QObject *_parent) : QObject(_parent), __stoargeFolder(_stoargeFolder)
+Translation::Translation(const QString &_stoargeFolder, QObject *_parent) : QThread(_parent), __stoargeFolder(_stoargeFolder)
 {
     init();
 }
@@ -256,11 +281,14 @@ Translation::Translation(const QString &_stoargeFolder, QObject *_parent) : QObj
 Translation::~Translation()
 {
     __database.close();
+    __run = false;
+    __wait.notify_all();
+    __subthread->wait();
 }
 
 void Translation::init()
 {
-    __net_manager = new QNetworkAccessManager(this);
+    __run = true;
     if (!QDir(__stoargeFolder).isAbsolute() || __stoargeFolder.isEmpty())
         __stoargeFolder = QCoreApplication::applicationDirPath() + __stoargeFolder + "/";
     __dbpath = __stoargeFolder + "cache/transdata.db";
@@ -268,6 +296,7 @@ void Translation::init()
     __database = QSqlDatabase::addDatabase("QSQLITE");
     __database.setDatabaseName(__dbpath);
     initDB();
+    start();
 }
 
 inline void Translation::initDB()
